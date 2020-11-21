@@ -57,6 +57,22 @@ var budgetController = function () {
 			data.allItem[type].push(newItem);
 			return newItem;
 		},
+		deleteItem:function(type,id){
+			var ids,index;
+			//id=3 
+			//data.allItem[type][id]
+			ids=data.allItem[type].map(function(current){
+				return current.id;
+			
+
+			})
+			index=ids.indexOf(id);
+
+			if(index!== -1){
+				data.allItem[type].splice(index,1);
+			}
+		},
+
 		calculateBudget:function(){
 			//calculate total income and expense
 			calculateTotal('expense');
@@ -98,8 +114,8 @@ var UIController = (function () {
 		budgetLabel:'.budget__value',
 		incomeLabel:'.budget__income--value',
 		expenseLabel:'.budget__expenses--value',
-		percentageLabel:'.budget__expenses--percentage'
-
+		percentageLabel:'.budget__expenses--percentage',
+		container:'.container',
 
 
 	}
@@ -129,6 +145,10 @@ var UIController = (function () {
 			document.querySelector(element).insertAdjacentHTML('beforeend',newHtml);
 
 
+		},
+		deleteListItem:function(selectorID){
+			var el= document.getElementById(selectorID);
+			el.parentNode.removeChild(el);
 		},
 		remove:function () {
 			document.querySelector()
@@ -179,6 +199,7 @@ var controller = (function (budgetCtrl, UICtrl) {
 				console.log("ENTER was pressed");
 			}
 		})
+		document.querySelector(DOM.container).addEventListener('click', ctrDeleteItem);
 
 	}
 	var updateBudget=function(){
@@ -215,6 +236,26 @@ var controller = (function (budgetCtrl, UICtrl) {
 
 		}
 	};
+	var ctrDeleteItem=function(event){
+		var itemID,splitID,type,ID;
+		
+		itemID=event.target.parentNode.parentNode.parentNode.parentNode.id 
+
+		if(itemID){
+			splitID=itemID.split('-');
+			type=splitID[0];
+			ID=parseInt( splitID[1]);
+			//1. Delete the item form the data structure
+				budgetCtrl.deleteItem(type,ID);
+			//2. Delete the item from the UI
+				UICtrl.deleteListItem(itemID)	;
+			//3. Update and show the new budget
+				updateBudget();
+
+		}
+//		console.log(f);
+		
+	}
 	return {
 		init: function () {
 			console.log("Application has start .");
@@ -228,7 +269,7 @@ var controller = (function (budgetCtrl, UICtrl) {
 			setupEventListeners();
 		},
 		testing: function () {
-			console.log()
+		//	console.log(budgetController.data);
 		}
 	};
 
